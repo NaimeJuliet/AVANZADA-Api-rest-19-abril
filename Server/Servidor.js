@@ -8,6 +8,8 @@ export class Servidor {
     constructor(){
         //atributo que se llama app donde almaceno la funcionalidad de express
         this.app = express()
+        //antes de usar los servicios habilito laa recepcion de datos
+        this.llamarAuxiliares()
         this.atenderServicios()
     }
     encenderServidor(){
@@ -22,5 +24,10 @@ export class Servidor {
     }
 
     conectarconBd(){}
+
+    llamarAuxiliares(){
+        // activo la recepcion de datos por el body de la peticion (palabra reservada)
+        this.app.use(express.json())
+    }
 
 }
