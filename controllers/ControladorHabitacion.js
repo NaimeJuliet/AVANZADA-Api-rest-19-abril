@@ -1,62 +1,114 @@
+//importamos el servicio (un controlador puede usar mas de un servicio)
+import {ServicioHabitacion} from '../services/ServicioReserva.js'
+
 //El controlador tiene la logica del negocio
 export class ControladorHabitacion{
 
     constructor(){}
 
-    insertar(request,response){
+    async insertar(request,response){
+        let servicio=new ServicioHabitacion()
         //recibir los datos de la peticion
         let datosPeticion=request.body //Recibo datos del body
 
-        //conexion con la BD
+        try{
+            await servicio.registrar(datosPeticion)//espero a que el servicio guarde los datos
+            response.status(200).json({
+                mensaje:"Exito en el ingreso de datos",
+                datosIngresados:[],
+                estado:true
+            })
 
-        //Ejecutar la consulta (es decirle a la base de datos que inserte)
-
-        //Envio la respuesta
-        response.status(200).json({
-            mensaje:"Exito en el ingreso de datos",
-            datosIngresados:datosPeticion,
-            estado:true
-        })
+        }catch(error){
+            response.status(400).json({
+                mensaje:"fallamos en el ingreso de datos",
+                datosIngresados:[],
+                estado:false
+            })
+        }               
     }
 
-    buscarTodos(request,response){
-        let datosPrueba=[
-            {nombre:"hab1",precio:300000},
-            {nombre:"hab2",precio:400000}
-        ]
-        response.status(200).json({
-            mensaje:"Exito buscando la informacion",
-            datos:datosPrueba,
-            estado:true
-        })
+    async buscarTodos(request,response){
+
+        //instancio la clase servico para poderla utilizar
+        let servicio=new ServicioHabitacion()
+        try{ 
+            
+            response.status(200).json({
+                mensaje:"Exito buscando la informacion",
+                datos:await servicio.buscarTodos(),
+                estado:true
+            })
+
+        }catch(error){
+            response.status(400).json({
+                mensaje:"Fallamos buscando la informacion",
+                datos:[],
+                estado:false
+            })
+        }
     }
 
-    buscarId(request,response){
+    async buscarId(request,response){
+        let servicio=new ServicioHabitacion()
         let id=request.params.id //id que llega por la URL
-        response.status(200).json({
-            mensaje:"Exito buscando habitacion por Id",
-            datos:"Datos del id "+id,
-            estado:true
-        })
+        try{
+            response.status(200).json({
+                mensaje:"Exito buscando habitacion por Id",
+                datos:await servicio.buscarId(id),
+                estado:true
+            })
+
+        }catch(error){
+            response.status(400).json({
+                mensaje:"Fallamos buscando habitacion por Id",
+                datos:[],
+                estado:false
+            })
+        } 
     }
 
-    editar(request,response){
+    async editar(request,response){
+        let servicio=new ServicioHabitacion()
         let id=request.params.id //id que llega por la URL
         let datosPeticion=request.body //Recibo datos del body
-        response.status(200).json({
-            mensaje:"Exito editando habitacion por Id",
-            datos:"Datos del id "+id,
-            estado:true
-        })
+
+        try{
+            await servicio.editar(id,datosPeticion)
+
+            response.status(200).json({
+                mensaje:"Exito editando habitacion por Id",
+                datos:"Datos del id "+id,
+                estado:true
+            })
+
+        }catch(error){
+            response.status(400).json({
+                mensaje:"Fallo editando habitacion por Id",
+                datos:[],
+                estado: false
+            })
+        }
     }
 
-    eliminar(request,response){
+    asynceliminar(request,response){
+        let servicio=new ServicioHabitacion()
         let id=request.params.id //id que llega por la URL
-        response.status(200).json({
-            mensaje:"Exito eliminando habitacion por Id",
-            datos:"Datos del id "+id,
-            estado:true
-        })
-    }
 
+        try{
+            await servicio.eliminar(id)
+            response.status(200).json({
+                mensaje:"Exito eliminando habitacion por Id",
+                datos:"Datos del id "+id,
+                estado:true
+            })
+
+        }catch(error){
+            response.status(400).json({
+            mensaje:"Fallamos eliminando habitacion por Id",
+            datos:"Datos del id "+id,
+            estado:false
+            })
+        }
+    }
 }
